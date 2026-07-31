@@ -1,0 +1,14 @@
+# Official Windows x64 installers bundled for offline DDSClient builds.
+# Checked on 2026-07-29.
+
+# SHA-512
+1134B85430FAAA808A30CE50457577E06A841A2091E132BB5EAAE6ACF29369ADEC55AFC65D7DE3D32636FB73DB4D4A99E3075049941D005737ABF8B787EED746  installers/dotnet-sdk-9.0.316-win-x64.exe
+
+# SHA-256
+82DB53FCB8F38BE541A26093489F39D5ED79B71B53CD121FC32A022A6BF310B1  installers/cmake-4.4.0-windows-x86_64.msi
+C54D9B9BBB8A36E6489363DDD01139707FD781D72F1F9E90C7EC65D0061368E0  installers/python-3.13.14-amd64.exe
+
+# Official sources
+# https://builds.dotnet.microsoft.com/dotnet/Sdk/9.0.316/dotnet-sdk-9.0.316-win-x64.exe
+# https://cmake.org/files/v4.4/cmake-4.4.0-windows-x86_64.msi
+# https://www.python.org/ftp/python/3.13.14/python-3.13.14-amd64.exe

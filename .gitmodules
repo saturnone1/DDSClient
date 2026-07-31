@@ -1,0 +1,6 @@
+[submodule "DDSCPP"]
+	path = DDSCPP
+	url = https://github.com/saturnone1/DDS_CPP.git
+[submodule "DDS_Nuget"]
+	path = DDS_Nuget
+	url = https://github.com/saturnone1/DDS_Nuget.git

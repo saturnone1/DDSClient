@@ -1,0 +1,22 @@
+# Generated builds and deliverables
+artifacts/
+DDSClient-Developer-Package/
+BUILD-DOCTOR.json
+
+# Local validation and harness directories
+.tmp-*/
+.validation-*/
+
+# Build caches
+**/build/
+**/build-*/
+**/bin/
+**/obj/
+**/.vs/
+
+# Large offline binaries are published as GitHub Release assets
+offline-tools/windows-x64/installers/
+offline-tools/linux-x64/*.tar
+
+# Runtime lock files
+*.lock
