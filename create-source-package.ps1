@@ -74,6 +74,10 @@ try {
         New-Item -ItemType Directory -Path $destination | Out-Null
         & robocopy.exe $source $destination /E /R:2 /W:1 /NFL /NDL /NJH /NJS /NP /XD .git .vs build 'build-*' bin obj artifacts | Out-Null
         if ($LASTEXITCODE -gt 7) { throw "Failed to stage $directory (robocopy exit code $LASTEXITCODE)." }
+        # robocopy reports success with a non-zero code (1 = files copied). It is the last
+        # native command in this script, so leaving it set makes the script exit non-zero
+        # even when the package was built correctly.
+        $global:LASTEXITCODE = 0
     }
 
     $manifest = @(
