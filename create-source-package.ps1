@@ -97,7 +97,8 @@ try {
     try {
         foreach ($required in @('DDSClient/build.ps1', 'DDSClient/build-linux.ps1',
             'DDSClient/DDSCPP/Dockerfile.linux',
-            'DDSClient/offline-tools/linux-x64/ddsclient-rocky9-builder.tar')) {
+            'DDSClient/offline-tools/linux-x64/ddsclient-rocky9-builder.tar',
+            'DDSClient/offline-tools/linux-x64/ddsclient-rocky10-builder.tar')) {
             if (-not ($archiveReader.Entries | Where-Object FullName -eq $required)) {
                 throw "Generated archive is missing: $required"
             }

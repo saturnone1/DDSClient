@@ -101,6 +101,35 @@ Dockerfile이나 Linux 빌드 스크립트를 변경한 개발자는 builder ima
 온라인 저장소에서 builder image를 강제로 다시 생성해 바로 빌드하려면
 `.\build-linux.ps1 -RebuildImage -Force`를 사용합니다.
 
+## Rocky Linux 10 빌드
+
+`-RockyVersion`으로 다른 Rocky 버전을 대상으로 빌드할 수 있습니다.
+
+```powershell
+.\build-linux.ps1 -RockyVersion 10.0 -Force
+```
+
+이미지 태그와 패키지 이름은 Rocky major 버전을 따라갑니다. 위 명령은
+`ddsclient-rocky10-builder:latest` 이미지를 만들고
+`DDSClient-CPP-rocky10-x64.tar.gz`를 생성하므로 Rocky 9 이미지나 산출물을
+덮어쓰지 않습니다. 두 버전을 나란히 보관할 수 있습니다.
+
+소스 ZIP에는 **Rocky 9와 Rocky 10 builder image가 모두 동봉**되므로, 위 명령은
+폐쇄망에서도 인터넷 없이 그대로 동작합니다. `build-linux.ps1`은 요청한 Rocky
+major 버전에 맞는 `ddsclient-rocky<major>-builder.tar`를 체크섬 검증 후
+자동으로 로드합니다.
+
+builder image를 갱신할 때는 두 버전이 함께 다시 만들어집니다.
+
+```powershell
+.\offline-tools\linux-x64\update-builder-image.ps1              # 기본값: 9.7, 10.0
+.\offline-tools\linux-x64\update-builder-image.ps1 -RockyVersions 10.0   # 특정 버전만
+```
+
+이 작업에는 인터넷(레지스트리 접근)이 필요하므로 반출 PC에서 수행한 뒤
+`create-source-package.ps1`로 ZIP을 다시 만들어 반입합니다.
+
+
 ## 결과
 
 ```text

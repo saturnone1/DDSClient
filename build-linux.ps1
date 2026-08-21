@@ -3,7 +3,8 @@ param(
     [string] $RtiHome,
     [string] $RtiPlatform,
     [string] $OutputDirectory,
-    [string] $DockerImage = 'ddsclient-rocky9-builder:latest',
+    [string] $DockerImage,
+    [ValidatePattern('^\d+(\.\d+)*$')]
     [string] $RockyVersion = '9.7',
     [switch] $SkipImageBuild,
     [switch] $RebuildImage,
@@ -14,11 +15,17 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$packageName = 'DDSClient-CPP-rocky9-x64'
-$bundledImageTag = 'ddsclient-rocky9-builder:latest'
-$bundledRockyVersion = '9.7'
+# Artifact and image names follow the Rocky major version, so a Rocky 10 build does
+# not overwrite the Rocky 9 image or ship under a rocky9 archive name.
+$rockyMajor = ($RockyVersion -split '\.')[0]
+$packageName = "DDSClient-CPP-rocky$rockyMajor-x64"
+if (-not $DockerImage) { $DockerImage = "ddsclient-rocky$rockyMajor-builder:latest" }
+
+# The offline bundle carries one builder image per supported Rocky version, so a closed
+# network can build any of them without reaching a registry.
+$bundledImageTag = "ddsclient-rocky$rockyMajor-builder:latest"
 $bundledImageDirectory = Join-Path $repoRoot 'offline-tools\linux-x64'
-$bundledImage = Join-Path $bundledImageDirectory 'ddsclient-rocky9-builder.tar'
+$bundledImage = Join-Path $bundledImageDirectory "ddsclient-rocky$rockyMajor-builder.tar"
 
 function Invoke-Checked {
     param([Parameter(Mandatory)] [string] $FilePath, [Parameter(Mandatory)] [string[]] $Arguments)
@@ -170,16 +177,18 @@ try {
         "-DTOPICS_XML=$(Join-Path $definitions 'topics.xml')",
         "-DOUTPUT_DIR=$generatedRoot", '-P', (Join-Path $repoRoot 'DDSCPP\cmake\GenerateRtiTypes.cmake'))
 
-    $customRockyRequested = $PSBoundParameters.ContainsKey('RockyVersion') -and $RockyVersion -ne $bundledRockyVersion
-    if ($RebuildImage -or $customRockyRequested) {
+    if ($SkipImageBuild) {
+        # Checked before the other branches so an already-loaded image for any Rocky
+        # version can be reused without a registry or a bundled tar.
+        Invoke-Checked $docker.Source @('image', 'inspect', '--format', '{{.Id}}', $DockerImage)
+    }
+    elseif ($RebuildImage) {
         Invoke-Checked $docker.Source @('build', '--build-arg', "ROCKY_VERSION=$RockyVersion", '-f',
             (Join-Path $repoRoot 'DDSCPP\Dockerfile.linux'), '-t', $DockerImage, (Join-Path $repoRoot 'DDSCPP'))
     }
-    elseif ($SkipImageBuild) {
-        Invoke-Checked $docker.Source @('image', 'inspect', '--format', '{{.Id}}', $DockerImage)
-    }
     elseif (Test-Path -LiteralPath $bundledImage -PathType Leaf) {
-        & (Join-Path $bundledImageDirectory 'update-builder-image.ps1') -VerifyOnly
+        # Verify only the image about to be loaded; other bundled versions are irrelevant here.
+        & (Join-Path $bundledImageDirectory 'update-builder-image.ps1') -VerifyOnly -RockyVersions $RockyVersion
         Invoke-Checked $docker.Source @('load', '--input', $bundledImage)
         if ($DockerImage -ne $bundledImageTag) {
             Invoke-Checked $docker.Source @('tag', $bundledImageTag, $DockerImage)
