@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>ddsclient</AssemblyName>
+    <RootNamespace>DdsAmbassador.DDSClient.Cli</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DDS_Nuget\generated\DDSSim\DdsAmbassador.Messages.DDSSim.csproj" />
+  </ItemGroup>
+</Project>

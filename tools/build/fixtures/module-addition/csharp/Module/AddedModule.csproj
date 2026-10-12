@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>DdsAmbassador.Messages.AddedAfterFreeze</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DdsAmbassador.DDSClient.Core">
+      <HintPath>$(FrozenCoreAssembly)</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <PackageReference Include="Rti.ConnextDds" Version="7.3.1"/>
+    <Compile Include="$(GeneratedModuleDirectory)/*.cs"/>
+    <Compile Include="$(GeneratedModuleDirectory)/AddedAfterFreezeMessages.cs"/>
+  </ItemGroup>
+  <Target Name="RequireFrozenCore" BeforeTargets="PrepareForBuild">
+    <Error Condition="!Exists('$(FrozenCoreAssembly)')" Text="FrozenCoreAssembly must point to an already-built Core DLL."/>
+  </Target>
+</Project>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="rti_dds_profiles.xsd">
+  <types><module name="Telemetry">
+    <struct name="Heartbeat"><member name="Counter" type="uint64"/></struct>
+  </module></types>
+</dds>

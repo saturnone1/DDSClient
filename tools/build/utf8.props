@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- CMake가 만든 사용자 지정 빌드도 .NET/Python의 UTF-8 출력을 그대로 읽습니다. -->
+  <ItemDefinitionGroup>
+    <CustomBuild>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <StdOutEncoding>utf-8</StdOutEncoding>
+      <StdErrEncoding>utf-8</StdErrEncoding>
+    </CustomBuild>
+    <CustomBuildStep>
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <StdOutEncoding>utf-8</StdOutEncoding>
+      <StdErrEncoding>utf-8</StdErrEncoding>
+    </CustomBuildStep>
+  </ItemDefinitionGroup>
+</Project>

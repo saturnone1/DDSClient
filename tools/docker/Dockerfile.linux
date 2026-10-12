@@ -1,0 +1,19 @@
+ARG ROCKY_VERSION=9.7
+FROM rockylinux/rockylinux:${ROCKY_VERSION}
+ARG ROCKY_VERSION
+
+# Pin build dependencies to the requested minor release; the default mirrors
+# otherwise upgrade a 9.7/10.0 base to the latest 9.x/10.x package set.
+RUN dnf --releasever=${ROCKY_VERSION} --disablerepo='*' --enablerepo=baseos,appstream \
+    --setopt=baseos.mirrorlist= \
+    --setopt=baseos.baseurl=https://dl.rockylinux.org/vault/rocky/${ROCKY_VERSION}/BaseOS/\$basearch/os/ \
+    --setopt=appstream.mirrorlist= \
+    --setopt=appstream.baseurl=https://dl.rockylinux.org/vault/rocky/${ROCKY_VERSION}/AppStream/\$basearch/os/ \
+    install -y gcc-c++ cmake make binutils file tar gzip python3 findutils \
+    && dnf clean all \
+    && rm -rf /var/cache/dnf
+
+COPY tools/docker/build-linux.sh /usr/local/bin/build-ddscpp-linux
+RUN chmod 0755 /usr/local/bin/build-ddscpp-linux
+
+ENTRYPOINT ["/usr/local/bin/build-ddscpp-linux"]

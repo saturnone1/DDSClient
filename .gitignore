@@ -1,4 +1,6 @@
 # Generated builds and deliverables
+DDS_Nuget/generated/
+DDSCPP/generated/
 artifacts/
 DDSClient-Developer-Package/
 BUILD-DOCTOR.json
@@ -13,6 +15,17 @@ BUILD-DOCTOR.json
 **/bin/
 **/obj/
 **/.vs/
+**/__pycache__/
+*.pyc
+
+# Build orchestration is source, not a generated build directory.
+!tools/build/
+!tools/build/**
+
+# Re-inclusion above must not expose generated fixture caches.
+tools/build/**/bin/
+tools/build/**/obj/
+tools/build/**/__pycache__/
 
 # Large offline binaries are published as GitHub Release assets
 offline-tools/windows-x64/installers/

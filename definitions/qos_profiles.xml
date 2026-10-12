@@ -1,0 +1,74 @@
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<qos_library name="AmbassadorProfiles">
+
+  <!-- ReliableRealtime
+       Single fixed runtime profile for Ambassador DDS traffic.
+
+       Intent:
+       - Samples are delivered reliably from the moment a DataReader joins.
+       - Samples published before a DataReader exists are not replayed.
+       - User data is delivered through multicast by advertising the reader multicast
+         receive address to matched writers.
+       - KEEP_ALL avoids intentional history loss; a stalled reader can still apply
+         backpressure and increase memory pressure.
+
+       Discovery is independent from this profile. Configure participant_qos/discovery/initial_peers below for deployment-specific
+       discovery. The shipped list enables multicast and shared-memory discovery. -->
+  <qos_profile name="ReliableRealtime">
+    <domain_participant_qos>
+      <!-- Deployment-specific Discovery settings belong here, not in application options.
+           Replace this list with unicast peers/your discovery service as appropriate. -->
+      <discovery>
+        <initial_peers>
+          <element>builtin.udpv4://239.255.0.1</element>
+          <element>builtin.shmem://</element>
+        </initial_peers>
+      </discovery>
+    </domain_participant_qos>
+    <datawriter_qos>
+      <durability>
+        <kind>VOLATILE_DURABILITY_QOS</kind>
+      </durability>
+      <reliability>
+        <kind>RELIABLE_RELIABILITY_QOS</kind>
+      </reliability>
+      <history>
+        <kind>KEEP_ALL_HISTORY_QOS</kind>
+      </history>
+      <liveliness>
+        <kind>AUTOMATIC_LIVELINESS_QOS</kind>
+        <lease_duration>
+          <sec>1</sec>
+          <nanosec>0</nanosec>
+        </lease_duration>
+      </liveliness>
+    </datawriter_qos>
+    <datareader_qos>
+      <durability>
+        <kind>VOLATILE_DURABILITY_QOS</kind>
+      </durability>
+      <reliability>
+        <kind>RELIABLE_RELIABILITY_QOS</kind>
+      </reliability>
+      <history>
+        <kind>KEEP_ALL_HISTORY_QOS</kind>
+      </history>
+      <multicast>
+        <value>
+          <element>
+            <receive_address>239.255.5.1</receive_address>
+          </element>
+        </value>
+      </multicast>
+      <liveliness>
+        <kind>AUTOMATIC_LIVELINESS_QOS</kind>
+        <lease_duration>
+          <sec>1</sec>
+          <nanosec>0</nanosec>
+        </lease_duration>
+      </liveliness>
+    </datareader_qos>
+  </qos_profile>
+
+</qos_library>
+</dds>

@@ -1,6 +1,22 @@
 **/build/
 **/build-*/
 **/.vs/
-DDS_Nuget/third_party/
-DDS_Nuget/rti/
 DDS_Nuget/artifacts/
+
+**/.git/
+**/bin/
+**/obj/
+**/__pycache__/
+**/artifacts/
+.validation-*/
+.tmp-*/
+offline-tools/windows-x64/
+offline-tools/linux-x64/
+
+# Build implementation scripts are source, not generated build directories.
+!tools/build/
+!tools/build/**
+tools/build/**/bin/
+tools/build/**/obj/
+tools/build/**/__pycache__/
+!tools/docker/build-linux.sh

@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  # DDS Client CLI를 수동 검증용으로 올리는 namespace입니다.
+  # 실제 프로젝트에서는 앱이 배포되는 namespace에 맞게 바꿔도 됩니다.
+  name: dds-test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # NuGet 모듈을 사용하는 애플리케이션과 같은 방식으로
+  # DdsClient를 초기화하고 DDS participant를 계속 유지하는 CLI pod입니다.
+  name: ddsclient-cli
+  namespace: dds-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ddsclient-cli
+  template:
+    metadata:
+      labels:
+        app: ddsclient-cli
+    spec:
+      containers:
+        - name: ddsclient
+          # 로컬 Docker Desktop 검증용 이미지입니다.
+          # 원격 클러스터에서는 registry.example.com/ddsclient:0.1.0 같은 실제 registry 주소로 바꾸세요.
+          image: ddsclient:local
+          imagePullPolicy: IfNotPresent
+
+          # shell 모드는 하나의 DdsClient 인스턴스를 생성하고 계속 유지합니다.
+          # DDS Discovery Service에 보이는 participant와 publish/subscribe에 쓰는 participant가 같습니다.
+          # 같은 participant로 명령을 실행하려면 kubectl attach로 이 프로세스에 붙으세요.
+          command:
+            - dotnet
+            - /app/ddsclient.dll
+            - shell
+          stdin: true
+          tty: true
+
+          volumeMounts:
+            - name: qos
+              mountPath: /app/definitions/qos_profiles.xml
+              subPath: qos_profiles.xml
+              readOnly: true
+
+          env:
+            # CLI imports connection environment variables explicitly; no connection XML.
+            - name: DDS_QOS_PROFILES_XML_PATH
+              value: /app/definitions/qos_profiles.xml
+
+            # 같은 domain id를 사용하는 participant끼리 discovery 및 송수신이 가능합니다.
+            - name: DDS_DOMAIN_ID
+              value: "0"
+
+            # Discovery UI, RTI Admin Console, 로그에서 구분하기 쉬운 participant 이름입니다.
+            - name: DDS_PARTICIPANT_NAME
+              value: DdsClientK8s
+
+            # Debug이면 송신/수신 topic과 메시지 상세정보를 콘솔에 출력합니다.
+            # 운영 상시 사용 시에는 Info 또는 None을 권장합니다.
+            - name: DDS_LOG_LEVEL
+              value: Debug
+
+            # user data 송수신에 사용할 multicast receive address입니다.
+            # RTI DDS에서는 DataReader가 multicast receive_address를 광고하고,
+            # matched DataWriter가 그 locator로 데이터를 보냅니다.
+            # 따라서 QoS에는 별도의 multicast send address를 두지 않습니다.
+            - name: DDS_MULTICAST_ADDRESS
+              value: "239.255.5.1"
+
+      volumes:
+        - name: qos
+          configMap:
+            name: ddsclient-qos

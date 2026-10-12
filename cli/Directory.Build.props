@@ -1,0 +1,6 @@
+<Project>
+  <Import Project="../DDS_Nuget/Directory.Build.props" />
+  <PropertyGroup>
+    <RestoreConfigFile>$(MSBuildThisFileDirectory)../DDS_Nuget/NuGet.config</RestoreConfigFile>
+  </PropertyGroup>
+</Project>
